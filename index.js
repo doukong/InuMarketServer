@@ -1,16 +1,27 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    mongoose = require('mongoose')
+
+const account = require('./routes/account')
+const product = require('./routes/product')
 
 
-app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
-    });
-        
-    io.on('connection', function(socket){
-        console.log('a user connected');
-      });
+const app = express()
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: false}))
+
+var db = mongoose.connection;
+db.on('error',console.error);
+db.once('open',function() {
+    console.log("db connect");
 });
+mongoose.connect('mongodb://localhost/newINUM')
+
+app.use('/account',account)
+app.use('/product',product)
+app.use('/imgload',express.static('files'))
+app.use('/iosBanner',express.static('iosbanner'))
+app.use('/andBanner',express.static('andbanner'))
+
+app.listen(7000, ()=>{console.log("express work")})

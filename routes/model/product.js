@@ -21,7 +21,8 @@ var productSchema = new Schema({
         default: shortid.generate
 },
     productImg : [],
-    updateDate : Date
+    updateDate : String,
+    fileFolder : String
 });
 
 
